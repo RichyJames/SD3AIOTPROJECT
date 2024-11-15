@@ -1,14 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for
-from pymongo import MongoClient
+from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
-client = MongoClient('localhost', 27017)
-
-@app.route("/", methods=['GET', 'POST'])
-def index():
-    return render_template('index.html')
-
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///plants.db'  
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  
+db = SQLAlchemy(app)
 
 
 db = client.flask_database
