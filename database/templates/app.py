@@ -30,6 +30,18 @@ class Plant(db.Model):
         return f'<Plant {self.name}>'
 
 
+with app.app_context():
+    db.create_all()
+
+@app.route('/add_plant', methods=['GET', 'POST'])
+def add_plant():
+    if request.method == 'POST':
+        name = request.form['name']
+        plant_type_id = request.form['plant_type']
+        location_id = request.form['location']
+        date_planted = request.form['data.planted']
+
+        new_plant 
 
 @app.route('/')
 def home():
