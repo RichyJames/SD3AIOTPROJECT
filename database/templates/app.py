@@ -41,11 +41,23 @@ def add_plant():
         location_id = request.form['location']
         date_planted = request.form['data.planted']
 
-        new_plant 
+        new_plant = Plant(name=name, plant_type_id=plant_type_id, location_id=location_id, date_planted=date_planted)
+
+
+        db.session.add(new_plant)
+        db.session.commit()
+
+
+        plant_types = PlantType.query.all()
+        locations = Location.query.all()
+
+
+
+    return render_template('add_plant.html', plant_types=plant_types, locations=locations)
 
 @app.route('/')
 def home():
-    return "Flask app is running and it is connected to MongoDB"
+    return "Welcome to the HydraBloom"
 
 if __name__ == "__main__":
     app.run(debug=True)
