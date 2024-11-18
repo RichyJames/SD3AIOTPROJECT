@@ -47,6 +47,7 @@ def add_plant():
         db.session.add(new_plant)
         db.session.commit()
 
+        return redirect(url_for('home'))
 
         plant_types = PlantType.query.all()
         locations = Location.query.all()
