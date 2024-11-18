@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='C:/Users/richy/OneDrive - Dundalk Institute of Technology/Documents/project_database/SD3AIOTPROJECT/database_templates')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///plants.db'  
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  
 db = SQLAlchemy(app)
@@ -11,6 +11,7 @@ db = SQLAlchemy(app)
 class PlantType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
+    water_requirement = db.Column(db.String(100), nullable=False)
 
 class Location(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -26,20 +27,26 @@ class Plant(db.Model):
 
     plant_type = db.relationship('PlantType', backref='plants')
     location = db.relationship('Location', backref='plants')
+  
     def __repr__(self):
-        return f'<Plant {self.name}>'
+        return f'<Plant {self.name}, Type: {self.plant_type.name}, Water Requirement: {self.plant_type.water_requirement}>'
 
 
 with app.app_context():
     db.create_all()
 
-@app.route('/add_plant', methods=['GET', 'POST'])
+@app.route('/')
+def home():
+    plant_types = PlantType.query.all() 
+    return render_template('mainPage.html', plant_types=plant_types)
+
+@app.route('/add_plant.html', methods=['GET', 'POST'])
 def add_plant():
     if request.method == 'POST':
         name = request.form['name']
         plant_type_id = request.form['plant_type']
         location_id = request.form['location']
-        date_planted = request.form['data.planted']
+        date_planted = request.form['data_planted']
 
         new_plant = Plant(name=name, plant_type_id=plant_type_id, location_id=location_id, date_planted=date_planted)
 
@@ -49,16 +56,10 @@ def add_plant():
 
         return redirect(url_for('home'))
 
-        plant_types = PlantType.query.all()
-        locations = Location.query.all()
-
-
+    plant_types = PlantType.query.all()
+    locations = Location.query.all()
 
     return render_template('add_plant.html', plant_types=plant_types, locations=locations)
-
-@app.route('/')
-def home():
-    return "Welcome to the HydraBloom"
 
 if __name__ == "__main__":
     app.run(debug=True)
