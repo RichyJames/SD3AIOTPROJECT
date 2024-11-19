@@ -3,14 +3,17 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
 from flask import session
+from flask_migrate import Migrate
 
 
 app = Flask(__name__, template_folder='C:/Users/richy/OneDrive - Dundalk Institute of Technology/Documents/project_database/SD3AIOTPROJECT/database_templates')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///plants.db'  
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 app.secret_key = 'Richy123'
+
 
 
 class User(db.Model):
@@ -45,8 +48,8 @@ class Plant(db.Model):
         return f'<Plant {self.name}, Type: {self.plant_type.name}, Water Requirement: {self.plant_type.water_requirement}>'
 
 
-with app.app_context():
-    db.create_all()
+#with app.app_context():
+  #  db.create_all()
 
 @app.route('/')
 def home():
@@ -75,7 +78,7 @@ def add_plant():
         date_planted = request.form['date_planted']
 
         user_id = session['user_id']
-        new_plant = Plant(name=name, plant_type_id=plant_type_id, location_id=location_id, date_planted=date_planted)
+    
 
         new_plant = Plant(
             name=name,
@@ -88,7 +91,7 @@ def add_plant():
         db.session.add(new_plant)
         db.session.commit()
 
-        return redirect(url_for('/mainPage'))
+        return redirect(url_for('mainPage'))
 
     plant_types = PlantType.query.all()
     locations = Location.query.all()
